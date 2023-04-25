@@ -1,0 +1,21 @@
+---
+- hosts: all
+  gather_facts: no
+  become: yes
+
+  tasks:
+    - name: kubeadm reset
+      command: kubeadm reset -f && kubectl delete -f kube-flannel.yml
+      register: reset_result
+
+    - debug:
+        msg: "{{ reset_result.stdout }}"
+
+    - name: delete files
+      file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - /etc/containerd/config.toml
+        - /etc/cni/net.d
+        - /home/ubuntu/.kube

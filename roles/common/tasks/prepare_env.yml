@@ -1,0 +1,11 @@
+---
+- name: disable firewall
+  ufw:
+    state: disabled
+
+- name: disable swap
+  shell: |
+    swapoff -a
+    sed -ri 's/.*swap.*/#&/' /etc/fstab | tee .swapoff
+  args:
+    creates: .swapoff

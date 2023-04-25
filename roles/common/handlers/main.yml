@@ -1,0 +1,20 @@
+---
+- name: restart chrony
+  systemd:
+    name: chrony
+    state: restarted
+
+- name: reload module
+  systemd:
+    name: systemd-modules-load
+    daemon_reload: yes
+    state: restarted
+
+- name: sysctl
+  shell: sysctl --system
+
+- name: restart containerd
+  systemd:
+    daemon_reload: yes
+    name: containerd
+    state: restarted

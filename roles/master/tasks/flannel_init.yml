@@ -1,0 +1,16 @@
+- name: copy kube-flannel.yml
+  become: no
+  copy:
+    src: kube-flannel.yml
+    dest: $HOME/.kube/kube-flannel.yml
+
+- name: install pod network
+  become: no
+  shell: kubectl create -f kube-flannel.yml | tee flannel_init
+  args:
+    chdir: $HOME/.kube
+    creates: flannel_init
+  register: flannel_init_command
+
+- debug:
+    msg: "{{ flannel_init_command.stdout }}"

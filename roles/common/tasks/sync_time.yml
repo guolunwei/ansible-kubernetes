@@ -1,0 +1,23 @@
+---
+- name: set timezone to Asia/Shanghai
+  timezone:
+    name: Asia/Shanghai
+
+- name: install chrony
+  apt:
+    name: chrony
+
+- name: generate chrony config
+  template:
+    src: chrony.conf.j2
+    dest: /etc/chrony/chrony.conf
+  notify: restart chrony
+
+- name: flush handlers
+  meta: flush_handlers
+
+- name: ensure chrony is running
+  systemd:
+    name: chrony
+    state: started
+    enabled: true

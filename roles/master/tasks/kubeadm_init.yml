@@ -1,0 +1,32 @@
+---
+- name: create .kube directory
+  become: no
+  file:
+    path: $HOME/.kube
+    state: directory
+
+- name: initialize the cluster
+  shell: |
+          kubeadm init --pod-network-cidr=10.244.0.0/16 \
+          --image-repository registry.cn-hangzhou.aliyuncs.com/google_containers | tee master_init
+          tail -2 master_init > kubeadm_join_command
+  args:
+    chdir: /home/ubuntu/.kube
+    creates: master_init
+  register: kubeadm_init_command
+
+- debug:
+    msg: "{{ kubeadm_init_command.stdout }}"
+
+- name: copy join command to local
+  fetch:
+    src: /home/ubuntu/.kube/kubeadm_join_command
+    dest: /tmp
+
+- name: copy admin.conf to user's kube config
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /home/ubuntu/.kube/config
+    remote_src: yes
+    owner: ubuntu
+    group: ubuntu

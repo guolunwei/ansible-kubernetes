@@ -1,0 +1,18 @@
+---
+- name: add conf for containerd
+  template:
+    src: containerd.conf.j2
+    dest: /etc/modules-load.d/containerd.conf
+  notify: reload module
+
+- name: flush handlers
+  meta: flush_handlers
+
+- name: add conf for kubernets
+  template:
+    src: 99-kubernetes-cri.conf.j2
+    dest: /etc/sysctl.d/99-kubernetes-cri.conf
+  notify: sysctl
+
+- name: flush handlers
+  meta: flush_handlers

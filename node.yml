@@ -1,0 +1,9 @@
+---
+- name: initiating node
+  hosts: nodes
+  gather_facts: no
+  become: yes
+
+  roles:
+    - common
+    - node

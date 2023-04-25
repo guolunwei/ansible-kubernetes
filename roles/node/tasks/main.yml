@@ -1,0 +1,21 @@
+---
+- name: create .kube directory
+  become: no
+  file:
+    path: $HOME/.kube
+    state: directory
+
+- name: copy kubeadm join command
+  copy:
+    src: /tmp/k8s-master/home/ubuntu/.kube/kubeadm_join_command
+    dest: /tmp/kubeadm_join_command
+
+- name: execute kubeadm join command
+  shell: sh /tmp/kubeadm_join_command | tee node_init
+  args:
+    chdir: /home/ubuntu/.kube
+    creates: node_init
+  register: kube_join_result
+
+- debug:
+    msg: "{{ kube_join_result.stdout }}"

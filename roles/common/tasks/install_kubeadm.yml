@@ -1,0 +1,24 @@
+---
+- name: install k8s source denpendencies
+  apt:
+    name: ['apt-transport-https', 'ca-certificates', 'curl']
+
+- name: add k8s apt-key
+  apt_key:
+    url: https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg
+    state: present
+
+- name: add k8s source
+  apt_repository:
+    repo: deb https://mirrors.aliyun.com/kubernetes/apt kubernetes-xenial main
+    state: present
+
+- name: install kubelet kubeadm kubectl
+  apt:
+    name: ['kubelet', 'kubeadm', 'kubectl']
+
+- name: ensure kubelet is running
+  systemd:
+    name: kubelet
+    state: started
+    enabled: true
